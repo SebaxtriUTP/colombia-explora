@@ -1,0 +1,103 @@
+# Colombia Explora - Git Ignore
+
+# ==============================================
+# DATOS SENSIBLES
+# ==============================================
+.env
+.env.local
+.env.production
+*.pem
+*.key
+secrets/
+
+# ==============================================
+# BASE DE DATOS
+# ==============================================
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# ==============================================
+# PYTHON
+# ==============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ==============================================
+# NODE.JS / ANGULAR
+# ==============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+
+# ==============================================
+# DOCKER
+# ==============================================
+*.log
+docker-compose.override.yml
+
+# ==============================================
+# IDE / EDITORES
+# ==============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# ==============================================
+# SISTEMA OPERATIVO
+# ==============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==============================================
+# TEMPORALES
+# ==============================================
+*.tmp
+*.temp
+*.bak
+*.backup

@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: explora_postgres
+    environment:
+      POSTGRES_USER: explora_user
+      POSTGRES_PASSWORD: explora_pass
+      POSTGRES_DB: explora_db
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - explora_net
+
+  auth:
+    build: ./auth
+    container_name: explora_auth
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://explora_user:explora_pass@postgres/explora_db
+      - JWT_SECRET=devsecret
+    ports:
+      - "8001:8001"
+    networks:
+      - explora_net
+
+  api:
+    build: ./api
+    container_name: explora_api
+    depends_on:
+      - postgres
+      - auth
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://explora_user:explora_pass@postgres/explora_db
+      - AUTH_URL=http://auth:8001
+      - JWT_SECRET=devsecret
+    ports:
+      - "8000:8000"
+    networks:
+      - explora_net
+
+  frontend:
+    build: ./frontend
+    container_name: explora_frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - explora_net
+
+networks:
+  explora_net:
+    driver: bridge
