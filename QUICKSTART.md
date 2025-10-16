@@ -2,6 +2,8 @@
 
 ## 📋 TL;DR
 
+### ▶️ Iniciar
+
 ```bash
 # DESARROLLO (día a día con debugger)
 ./scripts/dev-setup.sh
@@ -11,6 +13,15 @@ docker-compose up --build
 
 # PRODUCCIÓN (deploy a Kubernetes)
 ./scripts/k8s-deploy.sh && ./scripts/k8s-apply-ingress.sh
+```
+
+### ⏹️ Detener
+
+```bash
+# DETENER TODO EL PROYECTO
+kubectl delete namespace explora  # Kubernetes
+docker-compose down               # Docker Compose  
+minikube stop                     # Minikube
 ```
 
 ---
@@ -150,7 +161,8 @@ kubectl rollout restart deployment api -n explora
 
 | | DESARROLLO | TESTING | PRODUCCIÓN |
 |---|---|---|---|
-| **Comando** | `./scripts/dev-setup.sh` | `docker-compose up --build` | `./scripts/k8s-deploy.sh` |
+| **Iniciar** | `./scripts/dev-setup.sh` | `docker-compose up --build` | `./scripts/k8s-deploy.sh` |
+| **Detener** | `Ctrl+C` + `docker-compose -f docker-compose.dev.yml down` | `docker-compose down` | `kubectl delete ns explora` o `minikube stop` |
 | **Tiempo setup** | ~2 min | ~3 min | ~5 min |
 | **Debugger** | ✅ Sí | ❌ No | ❌ No |
 | **Hot reload** | ✅ Rápido | ❌ Lento | ❌ No |
@@ -175,6 +187,81 @@ docker-compose up --build
 # Deploy: Producción
 ./scripts/k8s-deploy.sh && ./scripts/k8s-apply-ingress.sh
 # → Despliegas a Kubernetes
+```
+
+---
+
+## 🛑 Cómo Detener Todo
+
+### Detener DESARROLLO
+
+```bash
+# 1. Detener servicios (Ctrl+C en cada terminal)
+# Frontend: Ctrl+C
+# Auth: Ctrl+C
+# API: Ctrl+C
+
+# 2. Detener PostgreSQL
+docker-compose -f docker-compose.dev.yml down
+
+# 3. Desactivar virtualenv (opcional)
+deactivate
+```
+
+### Detener TESTING
+
+```bash
+# Detener todos los contenedores y eliminar red
+docker-compose down
+
+# Limpieza completa (incluye volúmenes)
+docker-compose down -v
+```
+
+### Detener PRODUCCIÓN
+
+```bash
+# Opción 1: Solo eliminar el namespace (rápido)
+kubectl delete namespace explora
+
+# Opción 2: Detener Minikube completamente
+minikube stop
+
+# Opción 3: Eliminar Minikube (limpieza total)
+minikube delete
+```
+
+### 🚨 Detener TODO el Proyecto (Comando Único)
+
+```bash
+# Detiene: Kubernetes, Docker Compose, Minikube
+# 1. Eliminar namespace de Kubernetes
+kubectl delete namespace explora 2>/dev/null
+
+# 2. Detener Docker Compose
+docker-compose down
+docker-compose -f docker-compose.dev.yml down
+
+# 3. Detener Minikube
+minikube stop
+
+# Verificar que todo esté detenido
+echo "Kubernetes:" && kubectl get pods -n explora 2>&1 | head -1
+echo "Docker:" && docker-compose ps
+echo "Minikube:" && minikube status
+```
+
+### ♻️ Limpiar Recursos (Opcional)
+
+```bash
+# Limpiar imágenes Docker sin usar
+docker system prune -a
+
+# Limpiar volúmenes huérfanos
+docker volume prune
+
+# Eliminar datos de PostgreSQL local
+sudo rm -rf data/postgres data/postgres_dev
 ```
 
 ---
@@ -232,6 +319,8 @@ kubectl rollout restart deployment <nombre> -n explora
 
 ## 🎓 Resumen Ultra-Rápido
 
+### ▶️ Iniciar
+
 ```bash
 # ¿Quieres PROGRAMAR?
 ./scripts/dev-setup.sh
@@ -244,4 +333,18 @@ docker-compose up --build
 ./scripts/k8s-deploy.sh && ./scripts/k8s-apply-ingress.sh
 ```
 
+### ⏹️ Detener
+
+```bash
+# ¿Terminaste de trabajar?
+kubectl delete namespace explora           # Detener Kubernetes
+docker-compose down                        # Detener Docker Compose
+minikube stop                              # Detener Minikube
+```
+
+---
+
 **¡Eso es todo! 🚀**
+
+> 💡 **Tip:** Usa `Ctrl+F` para buscar rápidamente en este documento.
+> 📖 Para más detalles, consulta **WORKFLOW.md** y **DEVELOPMENT.md**
