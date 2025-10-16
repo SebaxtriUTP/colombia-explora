@@ -2,6 +2,40 @@
 
 Plataforma web moderna para reservas de destinos turísticos en el Eje Cafetero colombiano, con sistema de autenticación, gestión de destinos y reservas con cálculo automático de precios.
 
+---
+
+## ⚡ Quick Start
+
+```bash
+# DESARROLLO (con debugger)
+./scripts/dev-setup.sh
+
+# TESTING (Docker)
+docker-compose up --build
+
+# PRODUCCIÓN (Kubernetes)
+./scripts/k8s-deploy.sh && ./scripts/k8s-apply-ingress.sh
+```
+
+**� [QUICKSTART.md](QUICKSTART.md) - Guía rápida de 3 minutos**
+
+---
+
+## �📚 Documentación
+
+| Documento | Descripción | Cuándo usarlo |
+|-----------|-------------|---------------|
+| **[QUICKSTART.md](QUICKSTART.md)** | ⚡ 3 comandos para iniciar | **Primera vez - EMPIEZA AQUÍ** 🚀 |
+| **[WORKFLOW.md](WORKFLOW.md)** | 🎯 Comparativa de entornos (Local/Docker/K8s) | Entender los 3 modos de trabajo |
+| **[DEVELOPMENT.md](DEVELOPMENT.md)** | 🔧 Guía de desarrollo local con PyCharm/VSCode | Desarrollo diario con debugger |
+| **[DEBUGGING.md](DEBUGGING.md)** | 🐛 Ejemplos prácticos de debugging | Cuando tienes un bug |
+| **[README-KUBERNETES.md](README-KUBERNETES.md)** | ☸️ Guía de Kubernetes para principiantes | Deploy a producción |
+| **[SOLUCION-KUBERNETES.md](SOLUCION-KUBERNETES.md)** | 🔐 Arquitectura de Ingress | Entender el networking en K8s |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | 🏗️ Diagramas de arquitectura | Entender la estructura |
+| **[README.md](README.md)** (este archivo) | 📖 Documentación completa | Referencia general |
+
+---
+
 ## 📋 Tabla de Contenidos
 
 - [Arquitectura](#-arquitectura)
@@ -13,7 +47,11 @@ Plataforma web moderna para reservas de destinos turísticos en el Eje Cafetero 
 - [Base de Datos](#-base-de-datos)
 - [Sistema de Roles](#-sistema-de-roles)
 - [Desarrollo](#-desarrollo)
+  - [🔧 Desarrollo Local con PyCharm/VSCode](DEVELOPMENT.md)
+  - [🐳 Docker Compose (Testing)](#-docker-compose-testing-de-integración)
+  - [☸️ Kubernetes (Producción)](README-KUBERNETES.md)
 - [Testing](#-testing)
+- [Kubernetes](#-kubernetes)
 
 ---
 
@@ -569,7 +607,66 @@ Role: admin
 
 ## 💻 Desarrollo
 
-### Ver logs en tiempo real
+### 🎯 Entornos de Trabajo
+
+Este proyecto soporta **3 entornos** según tus necesidades:
+
+| Entorno | Cuándo usar | Herramientas |
+|---------|-------------|--------------|
+| **🔧 Desarrollo Local** | Desarrollo diario, debugging, hot reload | Python nativo + PyCharm/VSCode |
+| **🐳 Docker Compose** | Testing de integración, simular producción | Docker + Compose |
+| **☸️ Kubernetes** | Deploy real, producción, auto-scaling | Minikube / GKE / EKS |
+
+---
+
+### 🔧 Desarrollo Local (Recomendado para Development)
+
+**¿Por qué usar esto?**
+- ✅ **Debugger completo** con breakpoints en PyCharm/VSCode
+- ✅ **Hot reload ultra-rápido** (~2 segundos)
+- ✅ **Inspeccionar variables** en tiempo real
+- ✅ **Sin necesidad de reconstruir contenedores**
+
+**📖 Ver la [Guía Completa de Desarrollo](DEVELOPMENT.md)** para:
+- Setup automático con script
+- Configuración de PyCharm y VSCode
+- Debugging paso a paso
+- Hot reload con uvicorn
+- Best practices
+
+**Quick Start:**
+
+```bash
+# 1. Setup inicial (solo una vez)
+./scripts/dev-setup.sh
+
+# 2. Iniciar PostgreSQL (solo la BD en Docker)
+docker-compose -f docker-compose.dev.yml up -d postgres
+
+# 3. Iniciar servicios con hot reload
+# Terminal 1: Auth Service
+cd auth && source venv/bin/activate && uvicorn app.main:app --reload --port 8001
+
+# Terminal 2: API Service
+cd api && source venv/bin/activate && uvicorn app.main:app --reload --port 8000
+
+# Terminal 3: Frontend
+cd frontend && npm start
+
+# 🎯 Ahora puedes poner breakpoints en PyCharm y debugear!
+```
+
+---
+
+### 🐳 Docker Compose (Testing de Integración)
+
+**¿Cuándo usar esto?**
+- Probar todos los servicios juntos
+- Simular entorno de producción
+- Antes de hacer commit
+- CI/CD
+
+**Ver logs en tiempo real:**
 
 ```bash
 # Todos los servicios
@@ -582,13 +679,13 @@ docker-compose logs -f auth
 docker-compose logs -f postgres
 ```
 
-### Reiniciar un servicio
+**Reiniciar un servicio:**
 
 ```bash
 docker-compose restart frontend
 ```
 
-### Reconstruir después de cambios
+**Reconstruir después de cambios:**
 
 ```bash
 # Reconstruir todo
@@ -600,25 +697,7 @@ docker-compose build frontend
 docker-compose restart frontend
 ```
 
-### Desarrollo local del frontend (Hot Reload)
-
-Si quieres desarrollar el frontend con hot reload:
-
-```bash
-cd frontend
-npm install
-npm start  # Abre en http://localhost:4201
-```
-
-Actualiza `frontend/src/assets/env.js`:
-```javascript
-window['__env'] = {
-  API_URL: 'http://localhost:8000',
-  AUTH_URL: 'http://localhost:8001'
-};
-```
-
-### Resetear la base de datos
+**Resetear la base de datos:**
 
 ```bash
 # ⚠️ Esto borrará todos los datos
@@ -626,6 +705,72 @@ docker-compose down
 sudo rm -rf data/postgres
 docker-compose up -d
 ```
+
+---
+
+## ☸️ Kubernetes
+
+Para desplegar esta aplicación en Kubernetes (producción, alta disponibilidad, auto-escalado):
+
+### 📖 Documentación Completa
+
+Consulta la **[Guía Completa de Kubernetes](README-KUBERNETES.md)** que incluye:
+
+- ✅ Explicación para principiantes (¿Qué es Kubernetes?)
+- ✅ Instalación local con Minikube
+- ✅ Despliegue automático con scripts
+- ✅ Despliegue manual paso a paso
+- ✅ Configuración de autoscaling
+- ✅ Monitoreo y troubleshooting
+- ✅ Despliegue en la nube (GKE, EKS, AKS)
+- ✅ Comandos útiles (kubectl cheat sheet)
+
+### ⚡ Quick Start (Minikube)
+
+```bash
+# 1. Iniciar Minikube
+minikube start --cpus=4 --memory=8192
+
+# 2. Habilitar addons
+minikube addons enable ingress
+minikube addons enable metrics-server
+
+# 3. Desplegar automáticamente
+./scripts/k8s-deploy.sh
+
+# 4. Acceder a la aplicación
+minikube service frontend-service -n explora
+```
+
+### 📦 Recursos Kubernetes
+
+El directorio `k8s/` contiene 10 manifiestos YAML:
+
+- **namespace.yaml**: Namespace "explora" para aislamiento
+- **configmap.yaml**: Variables de configuración
+- **secrets.yaml**: Contraseñas y tokens
+- **postgres-pv.yaml**: Volumen persistente (10GB)
+- **postgres-deployment.yaml**: Base de datos (1 réplica)
+- **auth-deployment.yaml**: Servicio de autenticación (2 réplicas)
+- **api-deployment.yaml**: API principal (3 réplicas)
+- **frontend-deployment.yaml**: Frontend (3 réplicas)
+- **ingress.yaml**: Routing HTTP/HTTPS
+- **autoscaler.yaml**: Escalado automático basado en CPU
+
+### 🎯 Características Kubernetes
+
+- ✅ **Alta disponibilidad**: Múltiples réplicas de cada servicio
+- ✅ **Auto-healing**: Reinicio automático de pods fallidos
+- ✅ **Escalado automático**: HPA escala de 2 a 10 réplicas según CPU
+- ✅ **Zero-downtime deployments**: Rolling updates sin interrupciones
+- ✅ **Persistent storage**: Datos de PostgreSQL sobreviven a reinicios
+- ✅ **Load balancing**: Distribución automática de tráfico
+- ✅ **Health checks**: Liveness y readiness probes
+- ✅ **Secrets management**: Variables sensibles encriptadas
+
+### 🔗 Ver más
+
+Para instrucciones detalladas, arquitectura, troubleshooting y despliegue en producción, consulta **[README-KUBERNETES.md](README-KUBERNETES.md)**.
 
 ---
 

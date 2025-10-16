@@ -1,0 +1,8 @@
+# Namespace - Carpeta virtual para organizar todos los recursos de Colombia Explora
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: explora
+  labels:
+    name: explora
+    environment: production

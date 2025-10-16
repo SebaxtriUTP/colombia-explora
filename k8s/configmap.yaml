@@ -1,0 +1,19 @@
+# ConfigMap - Variables de entorno NO sensibles
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: explora-config
+  namespace: explora
+data:
+  # Configuración de base de datos
+  POSTGRES_DB: "explora"
+  POSTGRES_USER: "explora"
+  
+  # URLs de servicios internos (usando DNS de Kubernetes)
+  DATABASE_URL: "postgresql+asyncpg://explora:explora123@postgres-service:5432/explora"
+  AUTH_SERVICE_URL: "http://auth-service:8001"
+  API_SERVICE_URL: "http://api-service:8000"
+  
+  # Configuración de la aplicación
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
